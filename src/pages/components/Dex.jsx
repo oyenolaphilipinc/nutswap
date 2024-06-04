@@ -897,7 +897,7 @@ async function sendFee(amount) {
 
           <Button alignSelf={'center'} w={useBreakpointValue({ base: "80%", medium: "80%", lg: "27vw" })}
            mb={4} bgColor={'#FFFF6C'} h={'8vh'} borderRadius={'10px'} _hover={{ bg: "#FFFF6C", opacity: 0.8 }} onClick={handleSwap} 
-           >{connected ? 'SWAP' : 'CONNECT WALLET'}</Button>
+           >{ 'SWAP' }</Button>
         </Flex>
 
         <Flex
