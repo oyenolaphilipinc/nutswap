@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { TonConnectUIProvider, THEME } from "@tonconnect/ui-react";
+import { ToastContainer } from "react-toastify";
 
 
 const manifestUrl =
@@ -25,6 +26,7 @@ export default function App({ Component, pageProps }) {
      }>
     <ChakraProvider>
     <Component {...pageProps} />
+    <ToastContainer />
     </ChakraProvider>
     </TonConnectUIProvider>
     </>

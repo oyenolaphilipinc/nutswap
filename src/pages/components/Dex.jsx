@@ -25,6 +25,7 @@ import {
   
 } from "@chakra-ui/react";
 import { DeDustClient, JettonWallet, VaultJetton } from '@dedust/sdk';
+import {toast} from 'react-toastify'
 import bg from "../../../public/bg.png";
 import { TonConnectButton } from "@tonconnect/ui-react";
 import { LuRefreshCw } from "react-icons/lu";
@@ -88,8 +89,8 @@ const Dex = ({coins}) => {
   useEffect(()=>{
     const tonPrice = async ()=>{
       const tonPrice = await fetchTonPrice()
-      console.log(tonPrice.usd)
-      setTonPrice(tonPrice.usd)
+      console.log(tonPrice?.usd)
+      setTonPrice(tonPrice?.usd)
     }
 
     tonPrice()
@@ -650,6 +651,10 @@ FromWallet.sendTransfer(
 
 
   const handleSwap= async ()=>{
+    if(!connected){
+      toast.error('Please connect wallet')
+      return;
+    }
     if(selectedToken.symbol === "TON"){
       swap(selectedCoin.contractAddress, amount)
     }else if(selectedCoin.symbol === "TON"){
@@ -892,8 +897,7 @@ async function sendFee(amount) {
 
           <Button alignSelf={'center'} w={useBreakpointValue({ base: "80%", medium: "80%", lg: "27vw" })}
            mb={4} bgColor={'#FFFF6C'} h={'8vh'} borderRadius={'10px'} _hover={{ bg: "#FFFF6C", opacity: 0.8 }} onClick={handleSwap} 
-           isDisabled={connected ? false: true}
-           >{ connected ? 'SWAP' : 'CONNECT WALLET'}</Button>
+           >{connected ? 'SWAP' : 'CONNECT WALLET'}</Button>
         </Flex>
 
         <Flex

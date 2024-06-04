@@ -4,6 +4,7 @@ import Dex from "./components/Dex";
 import { DeDustClient } from '@dedust/sdk';
 import { Spinner, Flex } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+ import 'react-toastify/dist/ReactToastify.css';
 
 const inter = Inter({ subsets: ["latin"] });
 
