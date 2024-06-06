@@ -11,6 +11,7 @@ export function useSwapRoot() {
   const client = useTonClient();
   const { sender } = useTonConnect();
   const [fixedFee, setFixedFee] = useState<bigint | null>();
+  const [gas, setGas] = useState<bigint | null>();
 
   const swapRoot = useSyncInitialize(() => {
     if (!client) return;
@@ -22,8 +23,10 @@ export function useSwapRoot() {
     const rootData = async () => {
       try {
         setFixedFee(null);
-        const { fixedFee: fee } = await swapRoot.getSwapRootData();
+        setGas(null);
+        const { fixedFee: fee, gasFee } = await swapRoot.getSwapRootData();
         setFixedFee(toNano(fromNano(fee)));
+        setGas(toNano(fromNano(gasFee)));
       } catch (err) {
         console.log("rootData func", err.message);
       }
@@ -35,6 +38,7 @@ export function useSwapRoot() {
   // methods
   return {
     fixedFee,
+    gas,
     initSwapAggregator: async () =>
       await Root.initializeSwapAggregator(swapRoot, sender),
   };

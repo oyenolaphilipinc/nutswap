@@ -9,6 +9,7 @@ import { Address, toNano } from "@ton/core";
 import { SwapAggregator } from "@/contracts/SwapAggregator";
 import { Swap } from "./Swap";
 import { TonClient4 } from "@ton/ton";
+import { useSwapRoot } from "./useSwapRoot";
 
 export function useSwapAggregator() {
   const client = useTonClient();
@@ -22,6 +23,8 @@ export function useSwapAggregator() {
     useState<Address>();
 
   const [userAggregatorStatus, setUserAggregatorStatus] = useState(false);
+
+  const { gas } = useSwapRoot();
 
   // open swap root contract
   const swapRoot = useSyncInitialize(() => {
@@ -111,6 +114,7 @@ export function useSwapAggregator() {
         client,
         tokenAddress,
         amountIn,
+        gas,
         slippage,
         deadline,
         referralAddr
