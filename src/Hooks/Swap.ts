@@ -189,7 +189,7 @@ export class Swap {
                 next: { poolAddress: TON_TOKEN_2_POOL.address },
               })
             )
-            .storeCoins(toNano(jettonPriceToTon)) //jetton converted to ton
+            .storeCoins(jettonPriceToTon) //jetton converted to ton
             .storeAddress(
               (
                 await TOKEN_1_ROOT.getWallet(userSwapAggregatorAddress)
@@ -294,7 +294,7 @@ export class Swap {
                 swapParams: { recipientAddress: userAddress, deadline },
               })
             )
-            .storeCoins(toNano(jettonPriceToTon)) //jetton converted to ton
+            .storeCoins(jettonPriceToTon) //jetton converted to ton
             .storeAddress(
               (
                 await TOKEN_1_ROOT.getWallet(userSwapAggregatorAddress)
