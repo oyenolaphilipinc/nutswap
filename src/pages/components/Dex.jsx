@@ -777,6 +777,7 @@ async function sendFee(amount) {
           border="2px solid #FFFF6C"
           direction={"column"}
           gap={1}
+          bg={'#D9D9D91A'}
         >
           <Flex direction={"column"} w={"100%"} p={5} gap={2}>
             <Flex gap={2} color={"white"} alignItems={"center"} cursor={'pointer'} onClick={onOpen}>
