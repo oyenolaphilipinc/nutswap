@@ -8,6 +8,7 @@ export function useSyncInitialize<T>(func: () => T, deps: any[] = []) {
     (async () => {
       setState(func());
     })();
+    return () => {};
   }, deps);
 
   return state;

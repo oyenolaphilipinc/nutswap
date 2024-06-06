@@ -8,6 +8,7 @@ export function useAsyncInitialze<T>(func: () => Promise<T>, deps: any[] = []) {
     (async () => {
       setState(await func());
     })();
+    return () => {};
   }, deps);
 
   return state;

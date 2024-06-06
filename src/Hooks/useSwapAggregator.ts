@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTonClient } from "./useTonClient";
 import { useTonConnect } from "./useTonConnect";
 import { useSyncInitialize } from "./useSyncInitialize";
@@ -8,17 +8,21 @@ import { useAsyncInitialze } from "./useAsyncInitialize";
 import { Address, toNano } from "@ton/core";
 import { SwapAggregator } from "@/contracts/SwapAggregator";
 import { Swap } from "./Swap";
+import { TonClient4 } from "@ton/ton";
 
 export function useSwapAggregator() {
   const client = useTonClient();
   const { sender, userAddress } = useTonConnect();
 
-  const address = Address.parse(userAddress);
+  const address = userAddress ? Address.parse(userAddress) : undefined;
 
   const [noReferred, setNoReferred] = useState(0);
   const [referralEarnings, setReferralEarnings] = useState(0);
   const [userSwapAggregatorAddress, setUserSwapAggregatorAddress] =
     useState<Address>();
+
+  const [userAggregatorStatus, setUserAggregatorStatus] = useState(false);
+
   // open swap root contract
   const swapRoot = useSyncInitialize(() => {
     if (!client) return;
@@ -27,8 +31,8 @@ export function useSwapAggregator() {
 
   // open user aggregator contract
   const swapAggregator = useAsyncInitialze(async () => {
-    if (!client) return;
     if (!swapRoot) return;
+    if (!address) return;
     // user swap aggregator address
     try {
       const userSwapAggregatorAddr = await swapRoot.getUserAggregatorAddress(
@@ -43,7 +47,7 @@ export function useSwapAggregator() {
     } catch (err) {
       console.log(err.message);
     }
-  }, [client, swapRoot, address, userSwapAggregatorAddress]);
+  }, [swapRoot, address]);
 
   useEffect(() => {
     if (!swapAggregator) return;
@@ -59,17 +63,44 @@ export function useSwapAggregator() {
       }
     };
     aggregatorData();
-  }, [swapAggregator, noReferred, referralEarnings]);
+    return () => {};
+  }, [swapAggregator]);
+
+  useEffect(() => {
+    if (!userSwapAggregatorAddress) return;
+    async function contractStatus() {
+      try {
+        const latestBlock = await client.getLastBlock();
+
+        const status = await client.getAccount(
+          latestBlock.last.seqno,
+          userSwapAggregatorAddress
+        );
+
+        if (status.account.state.type !== "active") {
+          return setUserAggregatorStatus(false);
+        }
+        if (status.account.state.type == "active") {
+          return setUserAggregatorStatus(true);
+        }
+      } catch (err) {
+        console.log("contractStatus func", err.message);
+      }
+    }
+    contractStatus();
+    return () => {};
+  }, [userSwapAggregatorAddress]);
 
   // methods //
   return {
     noReferred,
     referralEarnings,
+    userAggregatorStatus,
 
     swapTonForJetton: async (
       tokenAddress: string,
       amountIn: bigint,
-      limit = toNano(0),
+      slippage = 1,
       deadline = 5,
       referralAddr = ""
     ) =>
@@ -80,7 +111,7 @@ export function useSwapAggregator() {
         client,
         tokenAddress,
         amountIn,
-        limit,
+        slippage,
         deadline,
         referralAddr
       ),
@@ -104,6 +135,27 @@ export function useSwapAggregator() {
         amountIn,
         jettonPriceToTon,
         limit,
+        deadline,
+        referralAddr
+      ),
+
+    swapJettonForTon: async (
+      tokenAddress: string,
+      amountIn: bigint,
+      jettonPriceToTon: bigint,
+      slippage = 1,
+      deadline = 5,
+      referralAddr = ""
+    ) =>
+      await Swap.jettonToTon(
+        sender,
+        address,
+        userSwapAggregatorAddress,
+        client,
+        tokenAddress,
+        amountIn,
+        jettonPriceToTon,
+        slippage,
         deadline,
         referralAddr
       ),
