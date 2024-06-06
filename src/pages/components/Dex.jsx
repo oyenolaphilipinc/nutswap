@@ -765,7 +765,7 @@ const Dex = ({ coins }) => {
       direction="column"
       minH="100vh"
       backgroundImage={`url(${bg.src})`}
-      backgroundSize="cover"
+      backgroundSize="contain"
       backgroundPosition="center"
       backgroundRepeat="no-repeat"
       bgColor="#0D0904"
