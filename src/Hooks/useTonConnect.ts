@@ -1,25 +1,18 @@
 import { useTonConnectUI, useTonAddress } from "@tonconnect/ui-react";
-import { Address, Sender, SenderArguments } from "@ton/core";
-import { useState, useEffect } from 'react';
+
+import { Sender, SenderArguments } from "@ton/core";
 
 export function useTonConnect(): {
-  sender: Sender | null;
+  sender: Sender;
   connected: boolean;
-  userAddress: string | null;
+  userAddress: string;
 } {
   const [tonConnectUI] = useTonConnectUI();
   const TONAddress = useTonAddress(true);
-
-  const [connected, setConnected] = useState(false);
-  const [userAddress, setUserAddress] = useState<string | null>(null);
-  const [sender, setSender] = useState<Sender | null>(null);
-
-  useEffect(() => {
-    if (tonConnectUI && TONAddress) {
-      setConnected(tonConnectUI.connected);
-      setUserAddress(TONAddress);
-      setSender({
-        send: async (args: SenderArguments) => {
+  return {
+    sender: {
+      send: async (args: SenderArguments) => {
+        try {
           await tonConnectUI.sendTransaction({
             messages: [
               {
@@ -30,15 +23,13 @@ export function useTonConnect(): {
             ],
             validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes for user to approve
           });
-        },
-        address: Address.parse(TONAddress),
-      });
-    }
-  }, [tonConnectUI, TONAddress]);
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    },
 
-  return {
-    sender,
-    connected,
-    userAddress,
+    connected: tonConnectUI?.connected,
+    userAddress: TONAddress,
   };
 }

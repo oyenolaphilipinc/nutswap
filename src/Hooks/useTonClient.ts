@@ -6,6 +6,8 @@ import { useAsyncInitialze } from "./useAsyncInitialize";
 export function useTonClient() {
   return useAsyncInitialze(
     async () =>
-    new TonClient4({ endpoint: "https://mainnet-v4.tonhubapi.com", })
+      new TonClient4({
+        endpoint: await getHttpEndpoint({ network: "mainnet" }),
+      })
   );
 }
