@@ -20,6 +20,8 @@ import {
 
 import { TonClient4 } from "@ton/ton";
 import { SwapAggregator } from "@/contracts/SwapAggregator";
+import { SwapRoot } from "@/contracts/SwapRoot";
+import { swapRootAddress } from "@/contracts/constants";
 
 export class Swap {
   static async tonToJetton(
@@ -35,10 +37,10 @@ export class Swap {
     referralAddr: string
   ) {
     if (!userAddress) return;
-    if (!(amountIn > 0)) return;
+    if (!(Number(amountIn) > 0)) return;
     try {
-      let referralAddress = beginCell().endCell();
-      if (referralAddr) {
+      let referralAddress = beginCell().storeAddress(userAddress).endCell();
+      if (referralAddr !== "") {
         referralAddress = beginCell()
           .storeAddress(Address.parse(referralAddr))
           .endCell();
@@ -79,16 +81,23 @@ export class Swap {
       const minAmountOut = toNano(
         (Number(fromNano(expectedAmountOut)) * 100 - slippage) / 100
       ); // expectedAmountOut - 1%
-      console.log(fromNano(minAmountOut));
+      console.log("minAmountOut", minAmountOut, fromNano(minAmountOut));
 
-      return await swapAggregator.sendSwapTonToJetton(sender, amountIn + gas, {
-        receipientAddress: userAddress,
-        poolAddress: TON_TOKEN_POOL.address,
-        tonVaultAddr: tonVault.address,
-        limit: minAmountOut,
-        deadline,
-        referralAddress,
-      });
+      const gasFee = Number(gas) > 0 ? gas : toNano("0.215");
+      console.log("gasFee", gasFee, gasFee + amountIn, gas);
+
+      return await swapAggregator.sendSwapTonToJetton(
+        sender,
+        amountIn + gasFee,
+        {
+          receipientAddress: userAddress,
+          poolAddress: TON_TOKEN_POOL.address,
+          tonVaultAddr: tonVault.address,
+          limit: toNano(0),
+          deadline,
+          referralAddress,
+        }
+      );
     } catch (err) {
       console.log("tonToJettonFunc", err.message);
     }
@@ -108,7 +117,8 @@ export class Swap {
     referralAddr: string
   ) {
     if (!userAddress) return;
-    let referralAddress = beginCell().endCell();
+    if (!(Number(amountIn) > 0)) return;
+    let referralAddress = beginCell().storeAddress(userAddress).endCell();
     if (referralAddr) {
       referralAddress = beginCell()
         .storeAddress(Address.parse(referralAddr))
@@ -166,6 +176,13 @@ export class Swap {
         throw new Error(`${tokenAddress1} vault does not exist`);
       }
 
+      console.log(
+        "jettonPriceToTon",
+        jettonPriceToTon,
+        toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
+        Number(fromNano(jettonPriceToTon)) * 0.01
+      );
+
       return await TOKEN_1_WALLET.sendTransfer(
         sender,
         toNano("0.3") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
@@ -181,7 +198,7 @@ export class Swap {
               VaultJetton.createSwapPayload({
                 poolAddress: TON_TOKEN_1_POOL.address,
                 limit,
-                swapParams: { recipientAddress: userAddress, deadline },
+                swapParams: { recipientAddress: userAddress },
                 next: { poolAddress: TON_TOKEN_2_POOL.address },
               })
             )
@@ -214,7 +231,8 @@ export class Swap {
     referralAddr: string
   ) {
     if (!userAddress) return;
-    let referralAddress = beginCell().endCell();
+    if (!(Number(amountIn) > 0)) return;
+    let referralAddress = beginCell().storeAddress(userAddress).endCell();
     if (referralAddr) {
       referralAddress = beginCell()
         .storeAddress(Address.parse(referralAddr))
@@ -271,7 +289,13 @@ export class Swap {
       );
       console.log("Expected Amount Out (TON):", fromNano(expectedAmountOut));
       console.log("Min Amount Out (TON):", fromNano(minAmountOut));
-
+      console.log(
+        "jettonPriceToTon",
+        fromNano(jettonPriceToTon),
+        Number(fromNano(jettonPriceToTon)) * 0.01,
+        toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
+        jettonPriceToTon
+      );
       return await TOKEN_1_WALLET.sendTransfer(
         sender,
         toNano("0.3") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
@@ -286,8 +310,8 @@ export class Swap {
             .storeRef(
               VaultJetton.createSwapPayload({
                 poolAddress: TON_TOKEN_1_POOL.address,
-                limit: minAmountOut,
-                swapParams: { recipientAddress: userAddress, deadline },
+                limit: toNano(0),
+                swapParams: { recipientAddress: userAddress },
               })
             )
             .storeCoins(jettonPriceToTon) //jetton converted to ton
@@ -320,5 +344,38 @@ export class Swap {
     } catch (err) {
       console.log("withDrawTon", err.message);
     }
+  }
+
+  static async withdrawJetton(
+    provider: TonClient4,
+    sender: Sender,
+    address: Address
+  ) {
+    const root = Address.parse(
+      "EQAQXlWJvGbbFfE8F3oS8s87lIgdovS455IsWFaRdmJetTon"
+    );
+
+    const swapRoot = provider.open(SwapRoot.createFromAddress(swapRootAddress));
+
+    const userAggregatorAddress = await swapRoot.getUserAggregatorAddress(
+      address
+    );
+
+    const swapAggregator = provider.open(
+      SwapAggregator.createFromAddress(userAggregatorAddress)
+    );
+
+    const scaleRoot = provider.open(JettonRoot.createFromAddress(root));
+
+    const userAggregatorJettonAddr = await scaleRoot.getWalletAddress(
+      userAggregatorAddress
+    );
+
+    console.log("userAggregatorJettonAddr", userAggregatorJettonAddr);
+
+    await swapAggregator.sendWithdrawJetton(sender, toNano("0.05"), {
+      jettonAmount: toNano("6"),
+      userAggregatorJettonAddress: userAggregatorJettonAddr,
+    });
   }
 }

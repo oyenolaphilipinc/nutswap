@@ -205,6 +205,7 @@ const Dex = ({ coins }) => {
   };
   const fetchEquivalentAmount = async (fromAddress, toAddress, amount) => {
     console.log("toaddress", toAddress);
+    if (Number(amount) <= 0) return;
     try {
       let fromTokenData;
       let toTokenData;
@@ -680,12 +681,18 @@ const Dex = ({ coins }) => {
       toast.error("Please connect wallet");
       return;
     }
+    if (Number(amount) <= 0) return;
     setIsLoading(true);
+    const tonData = await fetchTonPrice();
     let toAmount;
     if (fromTokenPrice) {
-      toAmount = toNano(Number(amount) * fromTokenPrice);
+      const tokenInTon = toNano(
+        (Number(amount) * fromTokenPrice) / parseFloat(tonData.usd)
+      );
+      toAmount =
+        Number(fixedFee) > Number(tokenInTon) * 0.01 ? fixedFee : tokenInTon;
     } else {
-      toAmount = fixedFee;
+      toAmount = fixedFee || toNano("0.01");
     }
     try {
       if (selectedToken.symbol === "TON") {
