@@ -81,18 +81,14 @@ export class Swap {
       ); // expectedAmountOut - 1%
       console.log(fromNano(minAmountOut));
 
-      return await swapAggregator.sendSwapTonToJetton(
-        sender,
-        amountIn + gas ? gas : toNano(0),
-        {
-          receipientAddress: userAddress,
-          poolAddress: TON_TOKEN_POOL.address,
-          tonVaultAddr: tonVault.address,
-          limit: minAmountOut,
-          deadline,
-          referralAddress,
-        }
-      );
+      return await swapAggregator.sendSwapTonToJetton(sender, amountIn + gas, {
+        receipientAddress: userAddress,
+        poolAddress: TON_TOKEN_POOL.address,
+        tonVaultAddr: tonVault.address,
+        limit: minAmountOut,
+        deadline,
+        referralAddress,
+      });
     } catch (err) {
       console.log("tonToJettonFunc", err.message);
     }
