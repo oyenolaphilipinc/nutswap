@@ -61,7 +61,7 @@ export function useSwapAggregator() {
     aggregatorData();
   }, [swapAggregator, noReferred, referralEarnings]);
 
-  // methods
+  // methods //
   return {
     noReferred,
     referralEarnings,
@@ -72,11 +72,8 @@ export function useSwapAggregator() {
       limit = toNano(0),
       deadline = 5,
       referralAddr = ""
-    ) => {
-      if (!client) return;
-      if (!swapAggregator) return;
-      if (!sender) return;
-      return await Swap.tonToJetton(
+    ) =>
+      await Swap.tonToJetton(
         swapAggregator,
         sender,
         address,
@@ -86,8 +83,7 @@ export function useSwapAggregator() {
         limit,
         deadline,
         referralAddr
-      );
-    },
+      ),
 
     swapJettonForJetton: async (
       tokenAddress1: string,
@@ -97,11 +93,8 @@ export function useSwapAggregator() {
       limit = toNano(0),
       deadline = 5,
       referralAddr = ""
-    ) => {
-      if (!client) return;
-      if (!sender) return;
-      if (!userSwapAggregatorAddress) return;
-      return await Swap.jettonToJetton(
+    ) =>
+      await Swap.jettonToJetton(
         sender,
         address,
         userSwapAggregatorAddress,
@@ -113,8 +106,7 @@ export function useSwapAggregator() {
         limit,
         deadline,
         referralAddr
-      );
-    },
+      ),
 
     withDrawTon: async (amount: bigint) =>
       await Swap.withDrawExcessTon(swapAggregator, sender, amount),
