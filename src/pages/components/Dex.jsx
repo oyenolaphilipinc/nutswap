@@ -830,6 +830,7 @@ const Dex = ({ coins }) => {
           border="2px solid #FFFF6C"
           direction={"column"}
           gap={1}
+          bg={"#D9D9D91A"}
         >
           <Flex direction={"column"} w={"100%"} p={5} gap={2}>
             <Flex
