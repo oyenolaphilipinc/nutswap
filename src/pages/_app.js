@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }) {
      <TonConnectUIProvider 
      manifestUrl={manifestUrl} 
      uiPreferences={{
-      theme: 'SYSTEM',
+      theme: 'DARK',
        colorsSet:{
         [THEME.DARK]: {
           connectButton:{
