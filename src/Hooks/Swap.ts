@@ -310,7 +310,7 @@ export class Swap {
             .storeRef(
               VaultJetton.createSwapPayload({
                 poolAddress: TON_TOKEN_1_POOL.address,
-                limit: toNano(0),
+                limit: minAmountOut,
                 swapParams: { recipientAddress: userAddress },
               })
             )
