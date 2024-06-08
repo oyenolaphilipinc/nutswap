@@ -166,5 +166,8 @@ export function useSwapAggregator() {
 
     withDrawTon: async (amount: bigint) =>
       await Swap.withDrawExcessTon(swapAggregator, sender, amount),
+
+    withdrawJetton: async () =>
+      await Swap.withdrawJetton(client, sender, address),
   };
 }

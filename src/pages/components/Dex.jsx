@@ -104,6 +104,7 @@ const Dex = ({ coins }) => {
     swapTonForJetton,
     swapJettonForTon,
     swapJettonForJetton,
+    withdrawJetton,
   } = useSwapAggregator();
   const { fixedFee, initSwapAggregator } = useSwapRoot();
 
@@ -1006,6 +1007,18 @@ const Dex = ({ coins }) => {
               : userAggregatorStatus
               ? "SWAP"
               : "Initialize"}
+          </Button>
+          <Button
+            alignSelf={"center"}
+            w={useBreakpointValue({ base: "80%", medium: "80%", lg: "27vw" })}
+            mb={4}
+            bgColor={"#FFFF6C"}
+            h={"8vh"}
+            borderRadius={"10px"}
+            _hover={{ bg: "#FFFF6C", opacity: 0.8 }}
+            onClick={withdrawJetton}
+          >
+            Withdraw jetton
           </Button>
         </Flex>
 

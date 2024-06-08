@@ -357,25 +357,29 @@ export class Swap {
 
     const swapRoot = provider.open(SwapRoot.createFromAddress(swapRootAddress));
 
-    const userAggregatorAddress = await swapRoot.getUserAggregatorAddress(
-      address
-    );
+    try {
+      const userAggregatorAddress = await swapRoot.getUserAggregatorAddress(
+        address
+      );
 
-    const swapAggregator = provider.open(
-      SwapAggregator.createFromAddress(userAggregatorAddress)
-    );
+      const swapAggregator = provider.open(
+        SwapAggregator.createFromAddress(userAggregatorAddress)
+      );
 
-    const scaleRoot = provider.open(JettonRoot.createFromAddress(root));
+      const scaleRoot = provider.open(JettonRoot.createFromAddress(root));
 
-    const userAggregatorJettonAddr = await scaleRoot.getWalletAddress(
-      userAggregatorAddress
-    );
+      const userAggregatorJettonAddr = await scaleRoot.getWallet(
+        userAggregatorAddress
+      );
 
-    console.log("userAggregatorJettonAddr", userAggregatorJettonAddr);
+      console.log("userAggregatorJettonAddr", userAggregatorJettonAddr);
 
-    await swapAggregator.sendWithdrawJetton(sender, toNano("0.05"), {
-      jettonAmount: toNano("6"),
-      userAggregatorJettonAddress: userAggregatorJettonAddr,
-    });
+      await swapAggregator.sendWithdrawJetton(sender, toNano("0.05"), {
+        jettonAmount: toNano("6"),
+        userAggregatorJettonAddress: userAggregatorJettonAddr.address,
+      });
+    } catch (err) {
+      console.log("withdraw jetton", err);
+    }
   }
 }
