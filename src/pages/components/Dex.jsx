@@ -109,6 +109,13 @@ const Dex = ({ coins }) => {
   const { fixedFee, initSwapAggregator } = useSwapRoot();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
+
+  const withdraw = async () => {
+    setWithdrawing(true);
+    await withdrawJetton();
+    setWithdrawing(false);
+  };
 
   useEffect(() => {
     // Initialize filtered coins with all coins initially
@@ -1016,9 +1023,10 @@ const Dex = ({ coins }) => {
             h={"8vh"}
             borderRadius={"10px"}
             _hover={{ bg: "#FFFF6C", opacity: 0.8 }}
-            onClick={withdrawJetton}
+            onClick={withdraw}
+            disabled={withdrawing}
           >
-            Withdraw jetton
+            {withdrawing ? "Loading..." : "withdraw jetton"}
           </Button>
         </Flex>
 

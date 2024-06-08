@@ -346,7 +346,7 @@ export class Swap {
     }
   }
 
-  static async withdrawJetton(
+  static async withdrawUserJetton(
     provider: TonClient4,
     sender: Sender,
     address: Address
