@@ -1015,19 +1015,6 @@ const Dex = ({ coins }) => {
               ? "SWAP"
               : "Initialize"}
           </Button>
-          <Button
-            alignSelf={"center"}
-            w={useBreakpointValue({ base: "80%", medium: "80%", lg: "27vw" })}
-            mb={4}
-            bgColor={"#FFFF6C"}
-            h={"8vh"}
-            borderRadius={"10px"}
-            _hover={{ bg: "#FFFF6C", opacity: 0.8 }}
-            onClick={withdraw}
-            disabled={withdrawing}
-          >
-            {withdrawing ? "Loading..." : "withdraw jetton"}
-          </Button>
         </Flex>
 
         <Flex
