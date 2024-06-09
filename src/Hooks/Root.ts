@@ -7,7 +7,7 @@ export class Root {
     sender: Sender
   ) {
     try {
-      return await swapRoot.sendInitializeAggregator(sender, toNano("0.02"));
+      return await swapRoot.sendInitializeAggregator(sender, toNano("0.05"));
     } catch (err) {
       console.log("initializeSwapAggregator", err.message);
     }
