@@ -981,7 +981,7 @@ const Dex = ({ coins }) => {
                 Price Impact
               </Text>
               <Spacer />
-              <Text color={"white"}> {`<${priceImpact}% `}</Text>
+              <Text color={"white"}> {`<${priceImpact.toFixed(2)}% `}</Text>
             </HStack>
 
             <HStack p={2}>
