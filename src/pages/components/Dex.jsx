@@ -981,7 +981,7 @@ const Dex = ({ coins }) => {
                 Price Impact
               </Text>
               <Spacer />
-              <Text color={"white"}> {`<${priceImpact}% `}</Text>
+              <Text color={"white"}> {`<${priceImpact.toFixed(2)}% `}</Text>
             </HStack>
 
             <HStack p={2}>
@@ -1015,6 +1015,20 @@ const Dex = ({ coins }) => {
               ? "SWAP"
               : "Initialize"}
           </Button>
+
+          {/* <Button
+            alignSelf={"center"}
+            w={useBreakpointValue({ base: "80%", medium: "80%", lg: "27vw" })}
+            mb={4}
+            bgColor={"#FFFF6C"}
+            h={"8vh"}
+            borderRadius={"10px"}
+            _hover={{ bg: "#FFFF6C", opacity: 0.8 }}
+            onClick={withdrawJetton}
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Withdraw Jettons"}
+          </Button> */}
         </Flex>
 
         <Flex

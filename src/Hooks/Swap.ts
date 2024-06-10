@@ -88,7 +88,7 @@ export class Swap {
 
       return await swapAggregator.sendSwapTonToJetton(
         sender,
-        amountIn + gasFee,
+        amountIn + gasFee + toNano("0.015"),
         {
           receipientAddress: userAddress,
           poolAddress: TON_TOKEN_POOL.address,
@@ -185,7 +185,9 @@ export class Swap {
 
       return await TOKEN_1_WALLET.sendTransfer(
         sender,
-        toNano("0.3") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
+        toNano("0.3") +
+          toNano(Number(fromNano(jettonPriceToTon)) * 0.01) +
+          toNano("0.015"),
         {
           queryId: 0,
           amount: amountIn,
@@ -298,7 +300,9 @@ export class Swap {
       );
       return await TOKEN_1_WALLET.sendTransfer(
         sender,
-        toNano("0.3") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
+        toNano("0.3") +
+          toNano(Number(fromNano(jettonPriceToTon)) * 0.01) +
+          toNano("0.015"),
         {
           queryId: 0,
           amount: amountIn,
