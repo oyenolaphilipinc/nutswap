@@ -61,6 +61,7 @@ import axios from "axios";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useSwapAggregator } from "@/Hooks/useSwapAggregator";
 import { useSwapRoot } from "@/Hooks/useSwapRoot";
+import { useRouter } from "next/router";
 
 const Dex = ({ coins }) => {
   const [amount, setAmount] = useState("");
@@ -96,6 +97,15 @@ const Dex = ({ coins }) => {
   const [priceImpact, setPriceImpact] = useState(0);
   const [priceAmount, setPriceAmount] = useState(0);
   const [tonPrice, setTonPrice] = useState(0);
+  const [referralId, setReferralId] = useState("");
+  const router = useRouter();
+  useEffect(() => {
+    const params = router.query;
+    if (params) {
+      console.log("params", params.refId);
+      setReferralId(params.refId);
+    }
+  }, []);
 
   const {
     noReferred,
@@ -997,7 +1007,7 @@ const Dex = ({ coins }) => {
               <Text color={"white"}> 0.2 - 0.05</Text>
             </HStack>
           </Flex>
-
+          <Text color={"white"}>{referralId}</Text>
           <Button
             alignSelf={"center"}
             w={useBreakpointValue({ base: "80%", medium: "80%", lg: "27vw" })}
