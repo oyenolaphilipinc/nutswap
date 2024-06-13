@@ -1007,7 +1007,6 @@ const Dex = ({ coins }) => {
               <Text color={"white"}> 0.2 - 0.05</Text>
             </HStack>
           </Flex>
-          <Text color={"white"}>{referralId}</Text>
           <Button
             alignSelf={"center"}
             w={useBreakpointValue({ base: "80%", medium: "80%", lg: "27vw" })}

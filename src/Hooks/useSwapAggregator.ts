@@ -103,9 +103,9 @@ export function useSwapAggregator() {
     swapTonForJetton: async (
       tokenAddress: string,
       amountIn: bigint,
+      referralAddr = "",
       slippage = 1,
-      deadline = 5,
-      referralAddr = ""
+      deadline = 5
     ) =>
       await Swap.tonToJetton(
         swapAggregator,
@@ -125,9 +125,9 @@ export function useSwapAggregator() {
       tokenAddress2: string,
       amountIn: bigint,
       jettonPriceToTon: bigint,
+      referralAddr = "",
       limit = toNano(0),
-      deadline = 5,
-      referralAddr = ""
+      deadline = 5
     ) =>
       await Swap.jettonToJetton(
         sender,
@@ -147,9 +147,9 @@ export function useSwapAggregator() {
       tokenAddress: string,
       amountIn: bigint,
       jettonPriceToTon: bigint,
+      referralAddr = "",
       slippage = 1,
-      deadline = 5,
-      referralAddr = ""
+      deadline = 5
     ) =>
       await Swap.jettonToTon(
         sender,
