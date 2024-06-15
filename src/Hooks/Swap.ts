@@ -83,13 +83,14 @@ export class Swap {
       ); // expectedAmountOut - 1%
       console.log("minAmountOut", minAmountOut, fromNano(minAmountOut));
 
-      const gasFee = Number(gas) > 0 ? gas : toNano("0.215");
+      const gasFee = Number(gas) > 0 ? gas : toNano("0.2");
       console.log("gasFee", gasFee, gasFee + amountIn, gas);
 
       return await swapAggregator.sendSwapTonToJetton(
         sender,
-        amountIn + gasFee + toNano("0.015"),
+        amountIn + gasFee + toNano("0.05"),
         {
+          amount: amountIn,
           receipientAddress: userAddress,
           poolAddress: TON_TOKEN_POOL.address,
           tonVaultAddr: tonVault.address,
@@ -185,16 +186,15 @@ export class Swap {
 
       return await TOKEN_1_WALLET.sendTransfer(
         sender,
-        toNano("0.3") +
-          toNano(Number(fromNano(jettonPriceToTon)) * 0.01) +
-          toNano("0.015"),
+        toNano("0.35") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
         {
           queryId: 0,
           amount: amountIn,
           destination: userSwapAggregatorAddress,
           responseAddress: userAddress,
           customPayload: new Cell(),
-          forwardAmount: toNano("0.25"),
+          forwardAmount:
+            toNano("0.3") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
           forwardPayload: beginCell()
             .storeRef(
               VaultJetton.createSwapPayload({
@@ -300,16 +300,16 @@ export class Swap {
       );
       return await TOKEN_1_WALLET.sendTransfer(
         sender,
-        toNano("0.3") +
-          toNano(Number(fromNano(jettonPriceToTon)) * 0.01) +
-          toNano("0.015"),
+        toNano("0.35") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
+
         {
           queryId: 0,
           amount: amountIn,
           destination: userSwapAggregatorAddress,
           responseAddress: userAddress,
           customPayload: new Cell(),
-          forwardAmount: toNano("0.25"),
+          forwardAmount:
+            toNano("0.3") + toNano(Number(fromNano(jettonPriceToTon)) * 0.01),
           forwardPayload: beginCell()
             .storeRef(
               VaultJetton.createSwapPayload({

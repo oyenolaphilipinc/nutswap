@@ -49,6 +49,7 @@ export class SwapAggregator implements Contract {
     via: Sender,
     value: bigint,
     options: {
+      amount: bigint;
       receipientAddress: Address;
       poolAddress: Address;
       tonVaultAddr: Address;
@@ -62,6 +63,7 @@ export class SwapAggregator implements Contract {
       sendMode: SendMode.PAY_GAS_SEPARATELY,
       body: beginCell()
         .storeUint(Op.make_swap_ton, 32)
+        .storeCoins(options.amount)
         .storeAddress(options.receipientAddress)
         .storeAddress(options.poolAddress)
         .storeAddress(options.tonVaultAddr)
