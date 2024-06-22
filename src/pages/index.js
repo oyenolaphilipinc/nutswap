@@ -18,7 +18,7 @@ export default function Home() {
       const pools = await dedustClient.getPools();
       
       // Filter pools with totalSupply more than 1000 and non-null metadata
-      const filteredPools = pools.filter(pool => parseInt(pool.totalSupply) > 10 && pool.assets[0].metadata !== null);
+      const filteredPools = pools.filter(pool => parseInt(pool.totalSupply) > 5 && pool.assets[0].metadata !== null);
       
       // Create a Map to store unique names and their corresponding image URLs and symbols
       const uniqueNamesWithImages = new Map();

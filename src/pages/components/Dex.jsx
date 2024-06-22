@@ -26,6 +26,13 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+   Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from "@chakra-ui/react";
 import { DeDustClient, JettonWallet, VaultJetton } from "@dedust/sdk";
 import { toast } from "react-toastify";
@@ -62,6 +69,7 @@ import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useSwapAggregator } from "@/Hooks/useSwapAggregator";
 import { useSwapRoot } from "@/Hooks/useSwapRoot";
 import { useRouter } from "next/router";
+import Tonweb from 'tonweb'
 
 const Dex = ({ coins }) => {
   const [amount, setAmount] = useState("");
@@ -87,6 +95,13 @@ const Dex = ({ coins }) => {
     onOpen: onSecondModalOpen,
     onClose: onSecondModalClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isDrawerOpen,
+    onOpen: onDrawerOpen,
+    onClose: onDrawerClose,
+  } = useDisclosure()
+
   const { sender, userAddress, connected } = useTonConnect();
   const client = useTonClient();
   const [tonBalance, setTonBalance] = useState(0);
@@ -117,6 +132,16 @@ const Dex = ({ coins }) => {
     withdrawJetton,
   } = useSwapAggregator();
   const { fixedFee, initSwapAggregator } = useSwapRoot();
+
+//   const fetch = async ()=>{
+//   const tonweb = new Tonweb();
+// const walletAddress = "EQBYc3DSi36qur7-DLDYd-AmRRb4-zk6VkzX0etv5Pa-Bq4Y";
+// const jettonWallet = await tonweb.provider.
+
+// console.log('Jetton balance:', jettonWallet);
+//   }
+
+//   fetch()
 
   const [isLoading, setIsLoading] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
@@ -366,6 +391,8 @@ const Dex = ({ coins }) => {
       )
     );
 
+    
+
     const lastBlock = await client.getLastBlock();
     const poolState = await client.getAccountLite(
       lastBlock.last.seqno,
@@ -413,7 +440,7 @@ const Dex = ({ coins }) => {
     const options = {
       method: "GET",
       headers: { accept: "application/json" },
-      url: `https://ton-mainnet.s.chainbase.online/2gdN9YBhuIewH7tTgyVeCkCKFl5/v1/getTokenData?address=${contractAddress}`,
+      url: `https://toncenter.com/api/v2/getTokenData?address=${contractAddress}`,
     };
 
     try {
@@ -470,8 +497,15 @@ const Dex = ({ coins }) => {
             setFilteredCoins([combinedDetails]);
           } else if (jettonContent.type === "offchain") {
             // Fetch the off-chain data from the URI
-            const offChainUri = jettonContent.data;
+            let offChainUri;
+            if(jettonContent.data === "https://github.com/dogeployer/jettons/raw/main/json/53_20240419180844.json"){
+              offChainUri = 'https://raw.githubusercontent.com/dogeployer/jettons/main/json/53_20240419180844.json'
+              console.log("Off-chain URI:", offChainUri);
+            }else{
+              offChainUri = jettonContent.data;
             console.log("Off-chain URI:", offChainUri);
+            }
+             
 
             if (offChainUri) {
               const additionalContent = await fetchAdditionalContent(
@@ -522,177 +556,7 @@ const Dex = ({ coins }) => {
     onSecondModalClose(); // Close the modal
   };
 
-  // const swap = async (address, amount) => {
-  //   console.log("AMount", amount), console.log("ca", address);
-  //   const client = new TonClient4({
-  //     endpoint: "https://mainnet-v4.tonhubapi.com",
-  //   });
-  //   console.log("console log");
-  //   const factory = client.open(
-  //     Factory.createFromAddress(MAINNET_FACTORY_ADDR)
-  //   );
 
-  //   const contractAddress = Address.parse(address);
-
-  //   const jetton = client.open(JettonRoot.createFromAddress(contractAddress));
-
-  //   const pool = client.open(
-  //     Pool.createFromAddress(
-  //       await factory.getPoolAddress({
-  //         poolType: PoolType.VOLATILE,
-  //         assets: [Asset.native(), Asset.jetton(jetton.address)],
-  //       })
-  //     )
-  //   );
-
-  //   const nativeVault = client.open(
-  //     VaultNative.createFromAddress(
-  //       await factory.getVaultAddress(Asset.native())
-  //     )
-  //   );
-
-  //   const lastBlock = await client.getLastBlock();
-  //   const poolState = await client.getAccountLite(
-  //     lastBlock.last.seqno,
-  //     pool.address
-  //   );
-  //   if (poolState.account.state.type !== "active") {
-  //     throw new Error("Pool is not exist.");
-  //   }
-
-  //   const vaultState = await client.getAccountLite(
-  //     lastBlock.last.seqno,
-  //     nativeVault.address
-  //   );
-  //   if (vaultState.account.state.type !== "active") {
-  //     throw new Error("Native Vault is not exist.");
-  //   }
-
-  //   const amountIn = toNano(amount);
-
-  //   const { amountOut: expectedAmountOut } = await pool.getEstimatedSwapOut({
-  //     assetIn: Asset.native(),
-  //     amountIn,
-  //   });
-
-  //   // Slippage handling (1%)
-  //   const minAmountOut = (expectedAmountOut * 99n) / 100n; // expectedAmountOut - 1%
-  //   console.log(fromNano(minAmountOut));
-
-  //   await nativeVault.sendSwap(sender, {
-  //     poolAddress: pool.address,
-  //     amount: amountIn,
-  //     limit: minAmountOut,
-  //     gasAmount: toNano("0.25"),
-  //   });
-  // };
-
-  // const swapJettontoTon = async (from, amount) => {
-  //   console.log("Amount", amount);
-  //   console.log("fromAddress", from);
-  //   console.log("selectedToken", selectedToken);
-
-  //   const client = new TonClient4({
-  //     endpoint: "https://mainnet-v4.tonhubapi.com",
-  //   });
-
-  //   const factory = client.open(
-  //     Factory.createFromAddress(MAINNET_FACTORY_ADDR)
-  //   );
-
-  //   const fromAddress = Address.parse(from);
-
-  //   // Open the jetton vault
-  //   const jettonVault = client.open(await factory.getJettonVault(fromAddress));
-  //   const jettonRoot = client.open(JettonRoot.createFromAddress(fromAddress));
-  //   console.log(sender);
-  //   const jettonWallet = client.open(
-  //     await jettonRoot.getWallet(sender.address)
-  //   );
-
-  //   console.log(jettonWallet.address);
-  //   // Open the pool
-  //   const pool = client.open(
-  //     Pool.createFromAddress(
-  //       await factory.getPoolAddress({
-  //         poolType: PoolType.VOLATILE,
-  //         assets: [Asset.native(), Asset.jetton(jettonRoot.address)],
-  //       })
-  //     )
-  //   );
-
-  //   const amountIn = toNano(amount);
-
-  //   // Estimate the amount of TON to receive
-  //   const { amountOut: expectedAmountOut } = await pool.getEstimatedSwapOut({
-  //     assetIn: Asset.jetton(jettonRoot.address),
-  //     amountIn,
-  //   });
-
-  //   const minAmountOut = (expectedAmountOut * 99n) / 100n;
-  //   console.log("Expected Amount Out (TON):", fromNano(expectedAmountOut));
-  //   console.log("Min Amount Out (TON):", fromNano(minAmountOut));
-
-  //   // Sending the transfer from the Jetton Wallet to the Jetton Vault
-  //   await jettonWallet.sendTransfer(sender, toNano("0.185"), {
-  //     amount: amountIn,
-  //     destination: jettonVault.address,
-  //     responseAddress: sender.address,
-  //     forwardAmount: toNano("0.125"),
-  //     forwardPayload: VaultJetton.createSwapPayload({
-  //       poolAddress: pool.address,
-  //       limit: minAmountOut,
-  //     }),
-  //   });
-
-  //   console.log("Swap initiated from Jetton to TON");
-  // };
-
-  // const swapJettonToJetton = async(from, to, amount)=>{
-  //   console.log('Amount', amount);
-  //   console.log('fromAddress', from);
-
-  //   const client = new TonClient4({
-  //     endpoint: "https://mainnet-v4.tonhubapi.com",
-  //   });
-
-  //   const factory = client.open(
-  //     Factory.createFromAddress(MAINNET_FACTORY_ADDR)
-  //   );
-
-  //   const fromAddress = Address.parse(from);
-  //   const toAddress = Address.parse(to);
-
-  //   const fromAsset = Asset.jetton(fromAddress)
-  //   const TON = Asset.native()
-  //   const toAsset = Asset.jetton(toAddress)
-
-  // const TON_FROM = client.open(await factory.getPool(PoolType.VOLATILE, [TON, fromAsset]));
-  // const TON_TO = client.open(await factory.getPool(PoolType.VOLATILE, [TON, toAsset]));
-
-  //  const jettonVault = client.open(await factory.getJettonVault(fromAddress));
-  // const FromRoot = client.open(JettonRoot.createFromAddress(fromAddress));
-  // const FromWallet = client.open(await FromRoot.getWallet(sender.address));
-
-  // const amountIn = toNano(amount);
-
-  // FromWallet.sendTransfer(
-  //   sender,
-  //   toNano("0.265"),
-  //   {
-  //     amount: amountIn,
-  //     destination: jettonVault.address,
-  //     responseAddress: sender.address,
-  //     forwardAmount: toNano('0.215'),
-  //     forwardPayload: VaultJetton.createSwapPayload({
-  //       poolAddress: TON_FROM.address,
-  //       next:{
-  //         poolAddress: TON_TO.address
-  //       }
-  //     })
-  //   }
-  // )
-  // }
 
   const handleSwap = async () => {
     if (!connected) {
@@ -740,50 +604,6 @@ const Dex = ({ coins }) => {
   };
   const [tonConnectUI] = useTonConnectUI();
 
-  // async function sendFee(amount) {
-  //   if (!connected) {
-  //     console.error("Wallet not connected. Please connect using the UI.");
-  //     return;
-  //   }
-
-  //   if (!amount || isNaN(amount) || amount <= 0) {
-  //     console.error("Invalid amount provided:", amount);
-  //     return;
-  //   }
-
-  //   const feeAddress = Address.parse(
-  //     "UQAp050vzuXoS-LlgRB7KJnvY3wisP1ewpGldwQWKf3pmfzL"
-  //   ); // Replace with actual recipient address (if needed)
-  //   const feePercentage = 0.01; // 1% fee
-  //   const Amount = parseFloat(amount * feePercentage);
-  //   const nanoTons = toNano(Amount);
-  //   console.log(nanoTons); // Calculate fee amount
-  //   const sendAmount = nanoTons.toString();
-  //   console.log(sendAmount);
-  //   console.log(feeAddress);
-
-  //   const body = beginCell()
-  //     .storeUint(0, 32)
-  //     .storeStringTail("Hello Ton")
-  //     .endCell();
-
-  //   try {
-  //     await tonConnectUI.sendTransaction({
-  //       validUntil: Math.floor(Date.now() / 1000) + 360,
-  //       messages: [
-  //         {
-  //           address: feeAddress.toString({
-  //             bounceable: false,
-  //           }),
-  //           amount: sendAmount,
-  //         },
-  //       ],
-  //     });
-  //     console.log("Transaction sent successfully!");
-  //   } catch (error) {
-  //     console.error("Error sending transaction:", error);
-  //   }
-  // }
 
   return (
     <Flex
@@ -845,7 +665,7 @@ const Dex = ({ coins }) => {
           p={3}
         >
           <Icon as={LuRefreshCw} boxSize={6} color={"#FFFF6C"} />
-          <Icon as={GiSettingsKnobs} boxSize={6} color={"#FFFF6C"} />
+          <Icon onClick={onDrawerOpen} cursor={'pointer'} as={GiSettingsKnobs} boxSize={6} color={"#FFFF6C"} />
         </Flex>
         <Flex
           // justify="center"
@@ -858,6 +678,7 @@ const Dex = ({ coins }) => {
           bg={"#D9D9D91A"}
         >
           <Flex direction={"column"} w={"100%"} p={5} gap={2}>
+            <Flex justifyContent={'space-between'}>
             <Flex
               gap={2}
               color={"white"}
@@ -876,6 +697,9 @@ const Dex = ({ coins }) => {
               <Icon as={TriangleDownIcon} boxSize={3} />
             </Flex>
 
+            <Text color={'white'}>{tonBalance  && tonBalance !== null? tonBalance : '0.00'}</Text>
+            </Flex>
+
             <Input
               h={"10vh"}
               borderRadius={"10px"}
@@ -885,6 +709,7 @@ const Dex = ({ coins }) => {
               color={"white"}
               value={amount}
               onChange={handleAmountChange}
+              textAlign={'right'}
             />
           </Flex>
 
@@ -897,6 +722,7 @@ const Dex = ({ coins }) => {
             justify="center"
             align="center"
             alignSelf={"center"}
+            textAlign={'right'}
           >
             <Icon
               as={MdOutlineKeyboardDoubleArrowDown}
@@ -1220,6 +1046,18 @@ const Dex = ({ coins }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+       <Drawer placement={'bottom'} onClose={onDrawerClose} isOpen={isDrawerOpen}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader borderBottomWidth='1px'>Basic Drawer</DrawerHeader>
+          <DrawerBody>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </Flex>
   );
 };
