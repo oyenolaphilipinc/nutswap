@@ -26,7 +26,7 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-   Drawer,
+  Drawer,
   DrawerBody,
   DrawerFooter,
   DrawerHeader,
@@ -69,7 +69,7 @@ import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useSwapAggregator } from "@/Hooks/useSwapAggregator";
 import { useSwapRoot } from "@/Hooks/useSwapRoot";
 import { useRouter } from "next/router";
-import Tonweb from 'tonweb'
+import Tonweb from "tonweb";
 
 const Dex = ({ coins }) => {
   const [amount, setAmount] = useState("");
@@ -100,7 +100,7 @@ const Dex = ({ coins }) => {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
     onClose: onDrawerClose,
-  } = useDisclosure()
+  } = useDisclosure();
 
   const { sender, userAddress, connected } = useTonConnect();
   const client = useTonClient();
@@ -113,6 +113,7 @@ const Dex = ({ coins }) => {
   const [priceAmount, setPriceAmount] = useState(0);
   const [tonPrice, setTonPrice] = useState(0);
   const [referralId, setReferralId] = useState("");
+  const [jtBalance, setJtBalance] = useState(0);
   const router = useRouter();
   useEffect(() => {
     const params = router.query;
@@ -133,15 +134,15 @@ const Dex = ({ coins }) => {
   } = useSwapAggregator();
   const { fixedFee, initSwapAggregator } = useSwapRoot();
 
-//   const fetch = async ()=>{
-//   const tonweb = new Tonweb();
-// const walletAddress = "EQBYc3DSi36qur7-DLDYd-AmRRb4-zk6VkzX0etv5Pa-Bq4Y";
-// const jettonWallet = await tonweb.provider.
+  //   const fetch = async ()=>{
+  //   const tonweb = new Tonweb();
+  // const walletAddress = "EQBYc3DSi36qur7-DLDYd-AmRRb4-zk6VkzX0etv5Pa-Bq4Y";
+  // const jettonWallet = await tonweb.provider.
 
-// console.log('Jetton balance:', jettonWallet);
-//   }
+  // console.log('Jetton balance:', jettonWallet);
+  //   }
 
-//   fetch()
+  //   fetch()
 
   const [isLoading, setIsLoading] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
@@ -182,6 +183,23 @@ const Dex = ({ coins }) => {
     }
   };
 
+  const fetchJettonBalance = async (jettonRootAddress) => {
+    try {
+      if (client && connected) {
+        const jettonRoot = client.open(
+          JettonRoot.createFromAddress(Address.parse(jettonRootAddress))
+        );
+        const jettonWallet = client.open(
+          await jettonRoot.getWallet(Address.parse(userAddress))
+        );
+        const jettonBalance = await jettonWallet.getBalance();
+        setJtBalance(Number(fromNano(jettonBalance)).toFixed(4));
+      }
+    } catch (err) {
+      console.log("Error fetching jetton balance", err);
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -197,6 +215,10 @@ const Dex = ({ coins }) => {
       isMounted = false;
     };
   }, [client, connected, userAddress]); // Add dependencies here
+
+  useEffect(() => {
+    fetchJettonBalance(selectedCoin.contractAddress);
+  }, [client, connected, userAddress, selectedCoin, selectedToken]);
 
   useEffect(() => {
     if (selectedToken && selectedCoin && amount) {
@@ -391,8 +413,6 @@ const Dex = ({ coins }) => {
       )
     );
 
-    
-
     const lastBlock = await client.getLastBlock();
     const poolState = await client.getAccountLite(
       lastBlock.last.seqno,
@@ -498,14 +518,17 @@ const Dex = ({ coins }) => {
           } else if (jettonContent.type === "offchain") {
             // Fetch the off-chain data from the URI
             let offChainUri;
-            if(jettonContent.data === "https://github.com/dogeployer/jettons/raw/main/json/53_20240419180844.json"){
-              offChainUri = 'https://raw.githubusercontent.com/dogeployer/jettons/main/json/53_20240419180844.json'
+            if (
+              jettonContent.data ===
+              "https://github.com/dogeployer/jettons/raw/main/json/53_20240419180844.json"
+            ) {
+              offChainUri =
+                "https://raw.githubusercontent.com/dogeployer/jettons/main/json/53_20240419180844.json";
               console.log("Off-chain URI:", offChainUri);
-            }else{
+            } else {
               offChainUri = jettonContent.data;
-            console.log("Off-chain URI:", offChainUri);
+              console.log("Off-chain URI:", offChainUri);
             }
-             
 
             if (offChainUri) {
               const additionalContent = await fetchAdditionalContent(
@@ -556,8 +579,6 @@ const Dex = ({ coins }) => {
     onSecondModalClose(); // Close the modal
   };
 
-
-
   const handleSwap = async () => {
     if (!connected) {
       toast.error("Please connect wallet");
@@ -603,7 +624,6 @@ const Dex = ({ coins }) => {
     }
   };
   const [tonConnectUI] = useTonConnectUI();
-
 
   return (
     <Flex
@@ -665,7 +685,13 @@ const Dex = ({ coins }) => {
           p={3}
         >
           <Icon as={LuRefreshCw} boxSize={6} color={"#FFFF6C"} />
-          <Icon onClick={onDrawerOpen} cursor={'pointer'} as={GiSettingsKnobs} boxSize={6} color={"#FFFF6C"} />
+          <Icon
+            onClick={onDrawerOpen}
+            cursor={"pointer"}
+            as={GiSettingsKnobs}
+            boxSize={6}
+            color={"#FFFF6C"}
+          />
         </Flex>
         <Flex
           // justify="center"
@@ -678,26 +704,28 @@ const Dex = ({ coins }) => {
           bg={"#D9D9D91A"}
         >
           <Flex direction={"column"} w={"100%"} p={5} gap={2}>
-            <Flex justifyContent={'space-between'}>
-            <Flex
-              gap={2}
-              color={"white"}
-              alignItems={"center"}
-              cursor={"pointer"}
-              onClick={onOpen}
-            >
-              <img
-                src={selectedToken ? selectedToken.imageUrl : "/logoton.png"}
-                width={40}
-                height={40}
-              />
-              <Text fontSize={"x-large"}>
-                {selectedToken ? selectedToken.symbol : "TON"}
-              </Text>
-              <Icon as={TriangleDownIcon} boxSize={3} />
-            </Flex>
+            <Flex justifyContent={"space-between"}>
+              <Flex
+                gap={2}
+                color={"white"}
+                alignItems={"center"}
+                cursor={"pointer"}
+                onClick={onOpen}
+              >
+                <img
+                  src={selectedToken ? selectedToken.imageUrl : "/logoton.png"}
+                  width={40}
+                  height={40}
+                />
+                <Text fontSize={"x-large"}>
+                  {selectedToken ? selectedToken.symbol : "TON"}
+                </Text>
+                <Icon as={TriangleDownIcon} boxSize={3} />
+              </Flex>
 
-            <Text color={'white'}>{tonBalance  && tonBalance !== null? tonBalance : '0.00'}</Text>
+              <Text color={"white"}>
+                {tonBalance && tonBalance !== null ? tonBalance : "0.00"}
+              </Text>
             </Flex>
 
             <Input
@@ -709,7 +737,7 @@ const Dex = ({ coins }) => {
               color={"white"}
               value={amount}
               onChange={handleAmountChange}
-              textAlign={'right'}
+              textAlign={"right"}
             />
           </Flex>
 
@@ -722,7 +750,7 @@ const Dex = ({ coins }) => {
             justify="center"
             align="center"
             alignSelf={"center"}
-            textAlign={'right'}
+            textAlign={"right"}
           >
             <Icon
               as={MdOutlineKeyboardDoubleArrowDown}
@@ -761,6 +789,7 @@ const Dex = ({ coins }) => {
               placeholder={Number(0)}
               readOnly
             />
+            <Text color={"white"}>{jtBalance}</Text>
           </Flex>
 
           <Flex
@@ -1047,10 +1076,14 @@ const Dex = ({ coins }) => {
         </ModalContent>
       </Modal>
 
-       <Drawer placement={'bottom'} onClose={onDrawerClose} isOpen={isDrawerOpen}>
+      <Drawer
+        placement={"bottom"}
+        onClose={onDrawerClose}
+        isOpen={isDrawerOpen}
+      >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader borderBottomWidth='1px'>Basic Drawer</DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px">Basic Drawer</DrawerHeader>
           <DrawerBody>
             <p>Some contents...</p>
             <p>Some contents...</p>
