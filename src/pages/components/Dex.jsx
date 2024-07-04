@@ -27,6 +27,7 @@ import {
   Tab,
   TabPanel,
   Drawer,
+  Divider,
   DrawerBody,
   DrawerFooter,
   DrawerHeader,
@@ -1090,23 +1091,26 @@ const Dex = ({ coins }) => {
         <DrawerContent minH={'50vh'} bgColor="#0D0904"  >
           <DrawerBody  bgColor="#0D0904" borderTopRadius={'24px'} border="4px solid #FFFF6C">
             <Flex direction={'column'} w={'100%'} gap={5} >
-              <Heading textAlign={'center'} fontSize={'4xl'} color={'white'}>Advanced Settings</Heading>
+              <Heading textAlign={'center'} fontSize={'4xl'} color={'white'} mt={4}>Advanced Settings</Heading>
               <Flex direction={'column'} gap={2}> 
-                <Heading color={'white'} fontSize={'3xl'} > Slippage</Heading>
-                <Text color={'#626262'}>Your transactions will revert if the price changes unfavourably by more than this percentage</Text>
+                <Heading color={'white'} fontSize={'2xl'} fontWeight={"normal"} > Slippage</Heading>
+                <Text color={'yellow.100'}>Your transactions will revert if the price changes unfavourably by more than this percentage</Text>
               </Flex>
               <Flex direction={'column'}>
                 <Flex justifyContent={'space-between'}> 
-                  <Text textAlign={'center'} h={'5vh'} border={'2px solid #FFFF6C'} borderRadius={'10px'} w={'25vw'} color={'white'}>
+                  <Text textAlign={'center'} h={'5vh'} py={2} border={'2px solid #FFFF6C'} borderRadius={'10px'} w={'25vw'} color={'white'}>
                     1%
                   </Text>
-                  <Text textAlign={'center'} border={'2px solid #FFFF6C'} w={'25vw'} color={'white'}>
-                    1%
+                  <Text textAlign={'center'} border={'2px solid #FFFF6C'} w={'25vw'} color={'white'} py={2} borderRadius={"10px"}>
+                    5%
                   </Text>
-                  <Text textAlign={'center'} border={'2px solid #FFFF6C'} w={'25vw'} color={'white'}>
-                    1%
+                  <Text textAlign={'center'} border={'2px solid #FFFF6C'} w={'25vw'} color={'white'} py={2} borderRadius={"10px"}>
+                    10%
                   </Text>
                 </Flex>
+                <Text textAlign={"center"} color={"yellow.200"} mt={4} mb={4} border={"2px solid #ffff6c"} py={3} borderRadius={"10px"} fontSize={"2xl"}>49%</Text>
+                <Divider borderColor={"#1f1910"} borderWidth={"2px"} my={4} />
+                <Button mx={"auto"} w={"75vw"} mt={4} bgColor={"#868438"} py={7} color={"white"} fontSize={"xl"} mb={6}>SAVE</Button>
               </Flex>
             </Flex>
           </DrawerBody>
