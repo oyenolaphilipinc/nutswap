@@ -796,6 +796,12 @@ const Dex = ({ coins }) => {
               readOnly
             />
             
+            <Flex justifyContent={"center"} gap={6} mt={4}>
+              <Button h={"26px"} w={"15px"} fontSize={"sm"} bgColor={"#574c37"} color={"white"} fontWeight={"normal"}>25%</Button>
+              <Button h={"26px"} w={"15px"} fontSize={"sm"} bgColor={"#574c37"} color={"white"} fontWeight={"normal"}>50%</Button>
+              <Button h={"26px"} w={"15px"} fontSize={"sm"} bgColor={"#574c37"} color={"white"} fontWeight={"normal"}>75%</Button>
+              <Button h={"26px"} w={"15px"} fontSize={"sm"} bgColor={"#574c37"} color={"white"} fontWeight={"normal"}>MAX</Button>
+            </Flex>
           </Flex>
 
           <Flex
@@ -1108,7 +1114,7 @@ const Dex = ({ coins }) => {
                     10%
                   </Text>
                 </Flex>
-                <Text textAlign={"center"} color={"yellow.200"} mt={4} mb={4} border={"2px solid #ffff6c"} py={3} borderRadius={"10px"} fontSize={"2xl"}>49%</Text>
+                <Input textAlign={"center"} color={"yellow.200"} mt={4} mb={4} border={"2px solid #ffff6c"} h={"7vh"} borderRadius={"10px"} fontSize={"2xl"}  focusBorderColor="transparent" errorBorderColor="transparent" placeholder="49%" _focus={{ borderColor: "#ffff6c", outline: "none", boxShadow: "none",}} _placeholder={{color: "yellow.200"}} />
                 <Divider borderColor={"#1f1910"} borderWidth={"2px"} my={4} />
                 <Button mx={"auto"} w={"75vw"} mt={4} bgColor={"#868438"} py={7} color={"white"} fontSize={"xl"} mb={6}>SAVE</Button>
               </Flex>
