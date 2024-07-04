@@ -33,6 +33,8 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  Heading,
+  VStack,
 } from "@chakra-ui/react";
 import { DeDustClient, JettonWallet, VaultJetton } from "@dedust/sdk";
 import { toast } from "react-toastify";
@@ -760,6 +762,7 @@ const Dex = ({ coins }) => {
           </Flex>
 
           <Flex direction={"column"} w={"100%"} p={5} gap={2}>
+          <Flex justifyContent={'space-between'}>
             <Flex
               gap={2}
               color={"white"}
@@ -777,6 +780,8 @@ const Dex = ({ coins }) => {
               </Text>
               <Icon as={TriangleDownIcon} boxSize={3} />
             </Flex>
+            <Text color={"white"}>{jtBalance}</Text>
+            </Flex>
 
             <Input
               h={"10vh"}
@@ -789,7 +794,7 @@ const Dex = ({ coins }) => {
               placeholder={Number(0)}
               readOnly
             />
-            <Text color={"white"}>{jtBalance}</Text>
+            
           </Flex>
 
           <Flex
@@ -1082,12 +1087,28 @@ const Dex = ({ coins }) => {
         isOpen={isDrawerOpen}
       >
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Basic Drawer</DrawerHeader>
-          <DrawerBody>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
+        <DrawerContent minH={'50vh'} bgColor="#0D0904"  >
+          <DrawerBody  bgColor="#0D0904" borderTopRadius={'24px'} border="4px solid #FFFF6C">
+            <Flex direction={'column'} w={'100%'} gap={5} >
+              <Heading textAlign={'center'} fontSize={'4xl'} color={'white'}>Advanced Settings</Heading>
+              <Flex direction={'column'} gap={2}> 
+                <Heading color={'white'} fontSize={'3xl'} > Slippage</Heading>
+                <Text color={'#626262'}>Your transactions will revert if the price changes unfavourably by more than this percentage</Text>
+              </Flex>
+              <Flex direction={'column'}>
+                <Flex justifyContent={'space-between'}> 
+                  <Text textAlign={'center'} h={'5vh'} border={'2px solid #FFFF6C'} borderRadius={'10px'} w={'25vw'} color={'white'}>
+                    1%
+                  </Text>
+                  <Text textAlign={'center'} border={'2px solid #FFFF6C'} w={'25vw'} color={'white'}>
+                    1%
+                  </Text>
+                  <Text textAlign={'center'} border={'2px solid #FFFF6C'} w={'25vw'} color={'white'}>
+                    1%
+                  </Text>
+                </Flex>
+              </Flex>
+            </Flex>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

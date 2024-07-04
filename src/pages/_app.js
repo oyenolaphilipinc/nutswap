@@ -1,11 +1,20 @@
 import "@/styles/globals.css";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { TonConnectUIProvider, THEME } from "@tonconnect/ui-react";
 import { ToastContainer } from "react-toastify";
+import "@fontsource/urbanist"
 
 
 const manifestUrl =
   "https://raw.githubusercontent.com/Draysongz/nutswap/main/public/manifest.json";
+
+
+  const theme = extendTheme({
+  fonts: {
+    heading: `'urbanist', sans-serif`,
+    body: `'urbanist', sans-serif`,
+  },
+});
 export default function App({ Component, pageProps }) {
   return (
     <>
@@ -24,7 +33,7 @@ export default function App({ Component, pageProps }) {
       }
      }
      }>
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
     <Component {...pageProps} />
     <ToastContainer />
     </ChakraProvider>
